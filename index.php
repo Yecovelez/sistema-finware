@@ -1,26 +1,41 @@
 <?php
-// 1. CARGAR LA CONEXIÓN PRIMERO (Esto es lo que falta)
+
+// 1. CONEXIÓN BD
 require_once 'config/db.php';
 
-// 2. Cargar el controlador
+// 2. CONTROLADOR
 require_once 'controllers/ProductoController.php';
 
-$controlador = new ProductoController();
+// 🔥 IMPORTANTE: el nombre de clase debe coincidir EXACTO
+$controlador = new productoController();
 
-// 3. Decidir qué acción ejecutar
+// 3. ROUTER SIMPLE
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
-if ($action == 'crear') {
-    $controlador->crear();
-} elseif ($action == 'guardar') {
-    $controlador->guardar();
-} elseif ($action == 'borrar') {
-    $controlador->borrar();
-} elseif ($action == 'editar') {
-    $controlador->editar(); // Esta línea llama al archivo que acabas de crear
-} elseif ($action == 'actualizar') {
-    $controlador->actualizar();
-} else {
-    $controlador->index();
+switch ($action) {
+
+    case 'crear':
+        $controlador->crear();
+        break;
+
+    case 'guardar':
+        $controlador->guardar();
+        break;
+
+    case 'borrar':
+        $controlador->borrar();
+        break;
+
+    case 'editar':
+        $controlador->editar();
+        break;
+
+    case 'actualizar':
+        $controlador->actualizar();
+        break;
+
+    default:
+        $controlador->index();
+        break;
 }
 ?>

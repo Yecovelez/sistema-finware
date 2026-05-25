@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Nuevo Producto - FINWARE</title>
-    <link rel="stylesheet" href="views/css/estilos.css">
+
+    <!-- RUTA SEGURA EN DOCKER -->
+    <link rel="stylesheet" href="/views/css/estilos.css">
 </head>
 <body>
+
     <div class="container">
+
         <h1>Registrar Nuevo Producto</h1>
+
         <form action="index.php?action=guardar" method="POST">
+
             <label>Nombre del Producto:</label>
             <input type="text" name="nombre" required>
 
@@ -25,7 +31,10 @@
                 <button type="submit" class="btn-nuevo">Guardar Producto</button>
                 <a href="index.php" class="btn-eliminar">Cancelar</a>
             </div>
+
         </form>
+
     </div>
+
 </body>
 </html>

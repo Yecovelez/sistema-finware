@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Editar Producto - FINWARE</title>
-    <link rel="stylesheet" href="views/css/estilos.css">
+
+    <!-- RUTA SEGURA EN DOCKER -->
+    <link rel="stylesheet" href="/views/css/estilos.css">
 </head>
 <body>
     <div class="container">
+
         <h1>Editar Producto</h1>
+
         <form action="index.php?action=actualizar" method="POST">
+
             <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
 
             <label>Nombre del Producto:</label>
@@ -25,9 +30,16 @@
 
             <div class="acciones">
                 <button type="submit" class="btn-nuevo">Actualizar Cambios</button>
-                <a href="index.php" class="btn-eliminar" style="text-decoration:none; padding:10px; background:#6c757d; color:white; border-radius:5px;">Cancelar</a>
+
+                <a href="index.php"
+                   class="btn-eliminar"
+                   style="text-decoration:none; padding:10px; background:#6c757d; color:white; border-radius:5px;">
+                   Cancelar
+                </a>
             </div>
+
         </form>
+
     </div>
 </body>
 </html>
