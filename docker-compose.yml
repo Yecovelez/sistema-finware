@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. El servidor web con tu código PHP
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=db_finware
+      - DB_USER=root
+      - DB_PASSWORD=
+    depends_on:
+      - db
+
+  # 2. La base de datos MySQL en blanco para el cliente
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_finware
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Este comando le dice a MySQL que cree la tabla 'productos' vacía al iniciar
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
