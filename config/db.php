@@ -1,12 +1,12 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $db_name = "db_finware"; // Asegúrate que este sea el nombre en phpMyAdmin
+    // Usamos host.docker.internal para que el contenedor pueda ver el MySQL de tu XAMPP
+    private $host = "host.docker.internal"; 
+    private $db_name = "db_finware"; 
     private $username = "root";
     private $password = "";
     public $conn;
 
-    // ESTA ES LA FUNCIÓN QUE TE ESTÁ PIDIENDO EL ERROR
     public function conectar() {
         $this->conn = null;
         try {
