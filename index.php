@@ -1,41 +1,60 @@
 <?php
+// 1. FORZAR VISUALIZACIÓN DE ERRORES
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// 1. CONEXIÓN BD
-require_once 'config/db.php';
+// 2. CONEXIÓN A LA BASE DE DATOS
+if (file_exists('config/db.php')) {
+    require_once 'config/db.php';
+} else if (file_exists('config/conexion.php')) {
+    require_once 'config/conexion.php';
+}
 
-// 2. CONTROLADOR
+// 3. CONTROLADORES
 require_once 'controllers/ProductoController.php';
+require_once 'controllers/VentaController.php'; 
 
-// 🔥 IMPORTANTE: el nombre de clase debe coincidir EXACTO
-$controlador = new productoController();
+$controladorProducto = new productoController();
+$controladorVenta = new VentaController(); 
 
-// 3. ROUTER SIMPLE
+// 4. ENRUTADOR (ROUTER)
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
 switch ($action) {
 
+    // --- RUTAS DE PRODUCTOS (INVENTARIO) ---
     case 'crear':
-        $controlador->crear();
+        $controladorProducto->crear();
         break;
 
     case 'guardar':
-        $controlador->guardar();
+        $controladorProducto->guardar();
         break;
 
     case 'borrar':
-        $controlador->borrar();
+        $controladorProducto->borrar();
         break;
 
     case 'editar':
-        $controlador->editar();
+        $controladorProducto->editar();
         break;
 
     case 'actualizar':
-        $controlador->actualizar();
+        $controladorProducto->actualizar();
         break;
 
+    // --- NUEVAS RUTAS DE VENTAS ---
+    case 'ventas':
+        $controladorVenta->index(); 
+        break;
+
+    case 'guardarVenta':
+        $controladorVenta->guardar(); 
+        break;
+
+    // --- RUTA POR DEFECTO ---
     default:
-        $controlador->index();
+        $controladorProducto->index();
         break;
 }
 ?>

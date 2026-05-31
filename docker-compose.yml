@@ -13,6 +13,8 @@ services:
       - DB_PASSWORD=
     depends_on:
       - db
+    volumes:
+      - .:/var/www/html
 
   # 2. La base de datos MySQL en blanco para el cliente
   db:
@@ -30,3 +32,4 @@ services:
 
 volumes:
   db_data:
+  

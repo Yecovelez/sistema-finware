@@ -1,10 +1,10 @@
 <?php
 class Database {
-    // Usamos host.docker.internal para que el contenedor pueda ver el MySQL de tu XAMPP
-    private $host = "host.docker.internal"; 
+    // Apuntamos directamente al nombre del servicio de tu contenedor Docker
+    private $host = "db"; 
     private $db_name = "db_finware"; 
     private $username = "root";
-    private $password = "";
+    private $password = ""; // Recuerda que en tu yaml pusiste vacía la clave
     public $conn;
 
     public function conectar() {
