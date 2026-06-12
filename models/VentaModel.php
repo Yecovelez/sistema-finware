@@ -40,20 +40,29 @@ class ModeloVentas {
         $stmt->bindParam(":precio_unitario", $datos["precio_unitario"], PDO::PARAM_STR);
 
         if ($stmt->execute()) {
-            // RESTA AUTOMÁTICA DE STOCK
-            $tablaProductos = "productos"; 
-            $stmtUpdate = $db->prepare("UPDATE $tablaProductos 
-                                        SET stock = stock - :cantidad_vendida 
-                                        WHERE id = :producto_id");
-            
-            $stmtUpdate->bindParam(":cantidad_vendida", $datos["cantidad"], PDO::PARAM_INT);
-            $stmtUpdate->bindParam(":producto_id", $datos["producto_id"], PDO::PARAM_INT);
-            $stmtUpdate->execute();
-            
-            return "ok";
+            try {
+                // RESTA AUTOMÁTICA DE STOCK
+                $tablaProductos = "productos"; 
+                $stmtUpdate = $db->prepare("UPDATE $tablaProductos 
+                                            SET stock = stock - :cantidad_vendida 
+                                            WHERE id = :producto_id");
+                
+                $stmtUpdate->bindParam(":cantidad_vendida", $datos["cantidad"], PDO::PARAM_INT);
+                $stmtUpdate->bindParam(":producto_id", $datos["producto_id"], PDO::PARAM_INT);
+                
+                if (!$stmtUpdate->execute()) {
+                    print_r($stmtUpdate->errorInfo());
+                    return "error_update_stock";
+                }
+                
+                return "ok";
+
+            } catch (Exception $e) {
+                echo "Error al actualizar stock: " . $e->getMessage();
+                return "error";
+            }
         } else {
             return "error";
         }
-        $stmt = null;
     }
 }

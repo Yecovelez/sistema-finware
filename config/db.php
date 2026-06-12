@@ -1,10 +1,9 @@
 <?php
 class Database {
-    // Apuntamos directamente al nombre del servicio de tu contenedor Docker
     private $host = "db"; 
     private $db_name = "db_finware"; 
     private $username = "root";
-    private $password = ""; // Recuerda que en tu yaml pusiste vacía la clave
+    private $password = ""; 
     public $conn;
 
     public function conectar() {

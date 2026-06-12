@@ -45,14 +45,28 @@ class VentaController {
                                             </tr>
                                         </thead>
                                         <tbody id="bodyCarrito">
-                                            </tbody>
+                                        </tbody>
                                     </table>
                                 </div>
 
                                 <hr class="my-4">
 
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-6">
+                                        <label for="inputDescuento" class="form-label text-secondary fw-bold m-0">Aplicar Descuento ($):</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control text-end fw-bold text-danger" id="inputDescuento" name="ventaDescuento" value="0.00" min="0" step="0.01" oninput="calcularTotales()">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-muted">Subtotal Neto:</span>
+                                    <span class="text-muted" id="textoSubtotal">$0.00</span>
+                                </div>
+
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h3 class="m-0 text-secondary">Total:</h3>
+                                    <h3 class="m-0 text-secondary">Total a Pagar:</h3>
                                     <h3 class="m-0 text-success fw-bold" id="textoTotal">$0.00</h3>
                                 </div>
 
@@ -142,11 +156,9 @@ class VentaController {
         function renderizarCarrito() {
             const bodyCarrito = document.getElementById('bodyCarrito');
             bodyCarrito.innerHTML = '';
-            let totalGeneral = 0;
 
             carrito.forEach((item, index) => {
                 let subtotal = item.precio * item.cantidad;
-                totalGeneral += subtotal;
 
                 bodyCarrito.innerHTML += `
                     <tr>
@@ -166,8 +178,38 @@ class VentaController {
                 `;
             });
 
-            document.getElementById('textoTotal').innerText = `$${totalGeneral.toFixed(2)}`;
-            document.getElementById('inputTotalHidden').value = totalGeneral.toFixed(2);
+            calcularTotales();
+        }
+
+        // LÓGICA DE CALCULO MATEMÁTICO INTEGRADA
+        function calcularTotales() {
+            let subtotalNeto = 0;
+
+            carrito.forEach(item => {
+                subtotalNeto += item.precio * item.cantidad;
+            });
+
+            // Leer valor de descuento ingresado por el usuario
+            let descuentoInput = parseFloat(document.getElementById('inputDescuento').value);
+            if (isNaN(descuentoInput) || descuentoInput < 0) {
+                descuentoInput = 0;
+            }
+
+            // Validar que el descuento no supere el costo total neto de los productos
+            if (descuentoInput > subtotalNeto) {
+                alert("El descuento no puede ser mayor al subtotal de la venta.");
+                descuentoInput = subtotalNeto;
+                document.getElementById('inputDescuento').value = subtotalNeto.toFixed(2);
+            }
+
+            let totalFinal = subtotalNeto - descuentoInput;
+
+            // Renderizar valores finales en la interfaz
+            document.getElementById('textoSubtotal').innerText = `$${subtotalNeto.toFixed(2)}`;
+            document.getElementById('textoTotal').innerText = `$${totalFinal.toFixed(2)}`;
+            
+            // Pasar el valor calculado final al input que procesa PHP
+            document.getElementById('inputTotalHidden').value = totalFinal.toFixed(2);
             document.getElementById('listaProductosJson').value = JSON.stringify(carrito);
         }
 
@@ -201,12 +243,20 @@ class VentaController {
         <?php
     }
 
-    // 2. MÉTODO PARA PROCESAR Y GUARDAR LA TRANSACCIÓN
+    // 2. MÉTODO PARA PROCESAR Y GUARDAR LA TRANSACCIÓN CON EL NUEVO MODELO
     public function guardar() {
         if (isset($_POST["nuevaVentaTotal"])) {
             
             $tablaVentas = "ventas";
-            $datosVenta = array("total" => $_POST["nuevaVentaTotal"]);
+            
+            // Capturamos el descuento que viaja desde el formulario por POST
+            $descuento = isset($_POST["ventaDescuento"]) ? $_POST["ventaDescuento"] : 0;
+
+            // Armamos el arreglo mapeado con las variables exactas que espera el ModeloVentas
+            $datosVenta = array(
+                "total" => $_POST["nuevaVentaTotal"],
+                "descuento" => $descuento
+            );
 
             $idVentaGarantizado = ModeloVentas::mdlRegistrarVenta($tablaVentas, $datosVenta);
 
@@ -233,7 +283,7 @@ class VentaController {
 
                 if ($erroresDetalle == 0) {
                     echo '<script>
-                        alert("¡La venta ha sido registrada con éxito y el inventario se ha actualizado!");
+                        alert("¡La venta con descuento ha sido registrada con éxito y el inventario se ha actualizado!");
                         window.location = "index.php?action=ventas"; 
                     </script>';
                 } else {

@@ -13,9 +13,11 @@ if (file_exists('config/db.php')) {
 // 3. CONTROLADORES
 require_once 'controllers/ProductoController.php';
 require_once 'controllers/VentaController.php'; 
+require_once 'controllers/ClienteController.php'; // <-- Agregado: Controlador de Clientes
 
 $controladorProducto = new productoController();
 $controladorVenta = new VentaController(); 
+$controladorCliente = new ClienteController(); // <-- Agregado: Instancia de Clientes
 
 // 4. ENRUTADOR (ROUTER)
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
@@ -43,13 +45,22 @@ switch ($action) {
         $controladorProducto->actualizar();
         break;
 
-    // --- NUEVAS RUTAS DE VENTAS ---
+    // --- RUTAS DE VENTAS ---
     case 'ventas':
         $controladorVenta->index(); 
         break;
 
     case 'guardarVenta':
         $controladorVenta->guardar(); 
+        break;
+
+    // --- NUEVAS RUTAS DE CLIENTES ---
+    case 'clientes':
+        $controladorCliente->index(); // Muestra el formulario y la lista
+        break;
+
+    case 'guardarCliente':
+        $controladorCliente->guardar(); // Procesa el formulario POST
         break;
 
     // --- RUTA POR DEFECTO ---
